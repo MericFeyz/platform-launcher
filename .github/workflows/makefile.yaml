@@ -77,7 +77,7 @@ jobs:
         
     - name: Push images
       shell: bash
-      if: ${{ inputs.work == "Nightly"}}  
+      if: inputs.work == "Nightly" 
       run: |
           export TERM=vt100
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
