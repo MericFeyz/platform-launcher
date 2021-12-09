@@ -12,7 +12,10 @@ on:
 
 
 jobs:
+  test:
+    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
   build:
+    needs: test
     runs-on: ubuntu-20.04
     environment: Dockerhub
     env:
@@ -21,12 +24,13 @@ jobs:
       DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
       PUSH_DRYRUN: "FALSE"
     steps:
-      - uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
+      
       - name: Push images
         shell: bash
         run: |
           export TERM=vt100
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+          pwd
           echo "Docker Prefix: $DOCKER_PREFIX"
           echo "Dryrun env: $PUSH_DRYRUN"
           
