@@ -4,17 +4,15 @@ name: Nigthly
 
 on:
   workflow_dispatch:
-  
   schedule:
     - cron: '0 0 * * *'
-  
-
-
-
 jobs:
   test:
     uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
     with:
       work: Nightly
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
           
   
