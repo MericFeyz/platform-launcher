@@ -12,10 +12,10 @@ jobs:
     uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
     with:
       work: Nightly
+      prefix: ${{ secrets.DOCKER_PREFIX }}
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
       
   docker-action:
     needs: test
