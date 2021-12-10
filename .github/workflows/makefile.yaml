@@ -7,16 +7,14 @@ on:
         type: string
         required: true
         description: Type of the work
-      prefix:
-        type: string
-        required: true
-        description: Docker Prefix
+      
     secrets:
       DOCKER_USERNAME:
         required: true
       DOCKER_PASSWORD: 
         required: true
-          
+      DOCKER_PREFIX:
+        required: true
   pull_request:
     branches:
       - develop
@@ -29,7 +27,7 @@ jobs:
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_PREFIX: ${{ inputs.prefix }}
+      DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
       PUSH_DRYRUN: 'True'
     runs-on: ubuntu-20.04
 
