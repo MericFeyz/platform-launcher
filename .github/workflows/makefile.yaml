@@ -66,7 +66,7 @@ jobs:
         export TERM=vt100
         export PATH=$PATH:/snap/bin
         make import-images DOCKER_TAG=test DEBUG=true
-        docker image prune -a -f
+        #docker image prune -a -f
         rm -rf oisp-*
         npm install nodemailer
         export NODOCKERLOGIN=true
@@ -88,6 +88,7 @@ jobs:
       if: inputs.work == 'Nightly'
       run: |
           export TERM=vt100
+          set +o pipefail
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           # Tag passed "test" images as "latest"
           images=$(docker images --format "{{.Repository}}:{{.Tag}}"| grep :test)
@@ -122,6 +123,7 @@ jobs:
               echo Only dry run mode. Not pushing to dockerhub!
             fi
           done
+          docker images
           
     - name: debug with upterm
       if: failure()
