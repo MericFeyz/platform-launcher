@@ -7,7 +7,20 @@ on:
   schedule:
     - cron: '0 0 * * *'
 jobs:
+  docker-action:
+    runs-on: ubuntu:20.04
+    container: 
+      image: oisp/deployer:latest
+      credentials:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - name: Deploy Test
+        shell: bash
+        run: |
+          echo "Hello Docker"
   test:
+    needs: docker-action
     uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
     with:
       work: Nightly
