@@ -18,9 +18,9 @@ on:
 jobs:
   build:
     env:
-      DOCKER_USERNAME: '${{ secrets.DOCKER_USERNAME}}'
-      DOCKER_PASSWORD: '${{ secrets.DOCKER_PASSWORD }}'
-      DOCKER_PREFIX: '${{ secrets.DOCKER_PREFIX }}'
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME}}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
       PUSH_DRYRUN: 'FALSE'
     runs-on: ubuntu-20.04
 
