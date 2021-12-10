@@ -35,7 +35,11 @@ jobs:
     - uses: actions/checkout@v2
       with:
         ref: ${{ github.ref }}
-
+        submodules: recursive
+        
+    - name: Test docker
+      shell: bash
+      run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
     - name: Prepare platform
       shell: bash
       run: |
@@ -46,7 +50,6 @@ jobs:
       shell: bash
       run: |
         export TERM=vt100
-        sudo apt install jq
         git submodule update --recursive --init
         make update
 
