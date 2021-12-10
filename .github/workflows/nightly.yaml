@@ -7,7 +7,18 @@ on:
   schedule:
     - cron: '0 0 * * *'
 jobs:
+  
+  test:
+    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
+    with:
+      work: Nightly
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
+      
   docker-action:
+    needs: test
     runs-on: ubuntu-20.04
     container: 
       image: oisp/deployer:latest
@@ -18,15 +29,7 @@ jobs:
       - name: Deploy Test
         shell: bash
         run: |
-          echo "Hello Docker"
-  test:
-    needs: docker-action
-    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
-    with:
-      work: Nightly
-    secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
+          ls .
+          docker images
           
   
