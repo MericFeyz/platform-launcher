@@ -91,7 +91,8 @@ jobs:
       - name: Deploy Test
         run: |
           export TERM=vt100
-          pwd
           ls -la /
+          cd /home
+          ls -la
           
   
