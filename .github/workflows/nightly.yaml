@@ -82,16 +82,14 @@ jobs:
 #    needs: build
     runs-on: ubuntu-20.04
     container: 
-      image: oisp/deployer:latest
+      image: docker://oisp/deployer:latest
       credentials:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - name: Deploy Test
-        shell: bash
         run: |
           export TERM=vt100
           ls -la
-          echo Hello
           
   
