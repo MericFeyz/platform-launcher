@@ -80,16 +80,19 @@ jobs:
   docker-action:
 #    needs: build
     runs-on: ubuntu-latest
-    env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    container: 
+      image: oisp/deployer:latest
+      credentials:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+      
+
     
     steps:
       - name: Deploy Test
         run: |
           export TERM=vt100
-          docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-          docker run -it oisp/deployer:latest
+          cd../../..
           pwd
           ls -la
           
