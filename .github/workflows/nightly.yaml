@@ -8,17 +8,76 @@ on:
     - cron: '0 0 * * *'
 jobs:
   
-  test:
-    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
-    with:
-      work: Nightly
-    secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
-      
+#  test:
+#    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
+  build:
+#    needs: test
+    runs-on: ubuntu-20.04
+    env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          PUSH_DRYRUN: 'True'
+    steps:
+      - uses: action/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+          submodules: recursive
+      - name: Prepare Platform
+        shell: bash
+        run: |
+          export TERM=vt100
+          cd util && \
+          bash setup-ubuntu20.04.sh
+      - name: Setup and Build
+        shell: bash
+        run: |
+          export TERM=vt100
+          set +o pipefail
+          make update
+          yes | DOCKER_TAG=test NODOCKERLOGIN=true DEBUG=true make build
+          
+      - name: Push images
+        shell: bash
+        run: |
+          set +o pipefail
+          docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+          # Tag passed "test" images as "latest"
+          images=$(docker images --format "{{.Repository}}:{{.Tag}}"| grep :test)
+          for image in $images; do
+            newimage=$(echo $image | sed -r "s/:test/:latest/g" | sed -r "s/$DOCKER_PREFIX/oisp/g");
+            docker tag $image $newimage;
+          done
+          #Start with latest tag, replace later by the real-tags
+          DOCKER_TAG="latest"
+          TARGET_DOCKER_TAG=nightly-`date -I`
+          DOCKER_PUSH_LATEST=true
+          # First push latest if applicable and then the real tag
+          echo Now trying to push with Tag ${DOCKER_TAG} push latest ${DOCKER_PUSH_LATEST}
+          if [ "$DOCKER_PUSH_LATEST" = "true" ]; then
+            echo Pushing images with latest tag
+            if [ -z "$PUSH_DRYRUN" ]; then
+              make push-images DOCKER_PREFIX=oisp
+            else
+              echo Only dry run mode. Not pushing to dockerhub!
+            fi
+          fi
+          # Now replace all latest tagged images by the real tag
+          echo Now pushing images with tag $DOCKER_TAG
+          images=$(docker images --format "{{.Repository}}:{{.Tag}}"| grep :latest | grep "oisp/")
+          for image in $images; do
+            newimage=$(echo $image | sed -r "s/:latest/:$TARGET_DOCKER_TAG/g");
+            echo tagging $image to $newimage;
+            docker tag $image $newimage
+            if [ -z "$PUSH_DRYRUN" ]; then
+              docker push ${newimage}
+            else
+              echo Only dry run mode. Not pushing to dockerhub!
+            fi
+          done
+          docker images
+          
   docker-action:
-    needs: test
+    needs: build
     runs-on: ubuntu-20.04
     container: 
       image: oisp/deployer:latest
@@ -30,6 +89,6 @@ jobs:
         shell: bash
         run: |
           ls .
-          docker images
+          echo Hello
           
   
