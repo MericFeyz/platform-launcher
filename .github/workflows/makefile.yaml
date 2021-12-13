@@ -2,19 +2,7 @@ name: End2End Test
 
 on:
   workflow_call:
-    inputs:
-      work:
-        type: string
-        required: true
-        description: Type of the work
-      
-    secrets:
-      DOCKER_USERNAME:
-        required: true
-      DOCKER_PASSWORD: 
-        required: true
-      DOCKER_PREFIX:
-        required: true
+
   pull_request:
     branches:
       - develop
@@ -24,11 +12,6 @@ on:
       - '**-debugtest'
 jobs:
   build:
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
-      PUSH_DRYRUN: 'True'
     runs-on: ubuntu-20.04
 
     steps:
@@ -37,9 +20,6 @@ jobs:
         ref: ${{ github.ref }}
         submodules: recursive
         
-    - name: Test docker
-      shell: bash
-      run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
     - name: Prepare platform
       shell: bash
       run: |
@@ -50,7 +30,7 @@ jobs:
       shell: bash
       run: |
         export TERM=vt100
-        git submodule update --recursive --init
+        #git submodule update --recursive --init
         make update
 
     - name: Build platform
@@ -66,7 +46,7 @@ jobs:
         export TERM=vt100
         export PATH=$PATH:/snap/bin
         make import-images DOCKER_TAG=test DEBUG=true
-        #docker image prune -a -f
+        docker image prune -a -f
         rm -rf oisp-*
         npm install nodemailer
         export NODOCKERLOGIN=true
@@ -83,48 +63,6 @@ jobs:
         echo Test return value: ${retval}
         exit ${retval}
         
-    - name: Push images
-      shell: bash
-      if: inputs.work == 'Nightly'
-      run: |
-          export TERM=vt100
-          set +o pipefail
-          docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-          # Tag passed "test" images as "latest"
-          images=$(docker images --format "{{.Repository}}:{{.Tag}}"| grep :test)
-          for image in $images; do
-            newimage=$(echo $image | sed -r "s/:test/:latest/g" | sed -r "s/$DOCKER_PREFIX/oisp/g");
-            docker tag $image $newimage;
-          done
-          #Start with latest tag, replace later by the real-tags
-          DOCKER_TAG="latest"
-          TARGET_DOCKER_TAG=nightly-`date -I`
-          DOCKER_PUSH_LATEST=true
-          # First push latest if applicable and then the real tag
-          echo Now trying to push with Tag ${DOCKER_TAG} push latest ${DOCKER_PUSH_LATEST}
-          if [ "$DOCKER_PUSH_LATEST" = "true" ]; then
-            echo Pushing images with latest tag
-            if [ -z "$PUSH_DRYRUN" ]; then
-              make push-images DOCKER_PREFIX=oisp
-            else
-              echo Only dry run mode. Not pushing to dockerhub!
-            fi
-          fi
-          # Now replace all latest tagged images by the real tag
-          echo Now pushing images with tag $DOCKER_TAG
-          images=$(docker images --format "{{.Repository}}:{{.Tag}}"| grep :latest | grep "oisp/")
-          for image in $images; do
-            newimage=$(echo $image | sed -r "s/:latest/:$TARGET_DOCKER_TAG/g");
-            echo tagging $image to $newimage;
-            docker tag $image $newimage
-            if [ -z "$PUSH_DRYRUN" ]; then
-              docker push ${newimage}
-            else
-              echo Only dry run mode. Not pushing to dockerhub!
-            fi
-          done
-          docker images
-          
     - name: debug with upterm
       if: failure()
       uses: lhotari/action-upterm@v1
