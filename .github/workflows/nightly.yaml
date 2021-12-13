@@ -18,7 +18,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           PUSH_DRYRUN: 'True'
     steps:
-      - uses: action/checkout@v2
+      - uses: actions/checkout@v2
         with:
           ref: ${{ github.ref }}
           submodules: recursive
@@ -39,6 +39,7 @@ jobs:
       - name: Push images
         shell: bash
         run: |
+          export TERM=vt100
           set +o pipefail
           docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           # Tag passed "test" images as "latest"
@@ -88,6 +89,7 @@ jobs:
       - name: Deploy Test
         shell: bash
         run: |
+          export TERM=vt100
           ls .
           echo Hello
           
