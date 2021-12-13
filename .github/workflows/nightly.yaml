@@ -76,9 +76,10 @@ jobs:
               echo Only dry run mode. Not pushing to dockerhub!
             fi
           done
+          docker images "oisp/*"
                     
   docker-action:
-#    needs: build
+    needs: build
     runs-on: ubuntu-latest
     container: 
       image: oisp/deployer:latest
@@ -86,7 +87,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    
     steps:
       - name: Deploy Test
         run: |
