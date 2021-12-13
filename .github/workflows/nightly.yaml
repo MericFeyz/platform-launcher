@@ -80,7 +80,7 @@ jobs:
           
   docker-action:
 #    needs: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container: 
       image: docker://oisp/deployer:latest
       credentials:
@@ -90,6 +90,7 @@ jobs:
       - name: Deploy Test
         run: |
           export TERM=vt100
+          pwd
           ls -la
           
   
