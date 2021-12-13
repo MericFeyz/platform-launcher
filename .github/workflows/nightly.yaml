@@ -8,10 +8,10 @@ on:
     - cron: '0 0 * * *'
 jobs:
   
-#  test:
-#    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
+  test:
+    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@Iss_Nightly
   build:
-#    needs: test
+    needs: test
     runs-on: ubuntu-20.04
     env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -76,7 +76,7 @@ jobs:
               echo Only dry run mode. Not pushing to dockerhub!
             fi
           done
-          docker images
+          docker images "oisp/*"
           
   docker-action:
     needs: build
