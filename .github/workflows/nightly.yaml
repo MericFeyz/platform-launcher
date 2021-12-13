@@ -92,5 +92,6 @@ jobs:
           export TERM=vt100
           pwd
           ls -la
+      - uses: lhotari/action-upterm@v1
           
   
