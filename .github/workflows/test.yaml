@@ -19,7 +19,8 @@ jobs:
         run: |
           export TERM=vt100
           cd /home/deployer
-          ls -la
+          ls -la .kube
+          ls -la .config
           mv .kube/config ~/.kube/config
           export HELM_ARGS="--atomic \
             --set less_resources=\"false\" --set production=\"true\" \
