@@ -19,6 +19,7 @@ jobs:
       - name: Deploy Test
         run: |
           export TERM=vt100
+          export HOME=/home/deployer
           cd /home/deployer
           export KUBECONFIG=/home/deployer/.kube/config
           export HELM_ARGS="--atomic \
