@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
 jobs:
   test:
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     runs-on: ubuntu-latest
     container:
       image: oisp/deployer:latest
@@ -16,6 +19,7 @@ jobs:
         run: |
           export TERM=vt100
           cd /home/deployer
+          sudo apt install jq
           export KUBECONFIG=/home/deployer/.kube/config
           export HELM_ARGS="--atomic \
             --set less_resources=\"false\" --set production=\"true\" \
