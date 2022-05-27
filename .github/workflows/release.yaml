@@ -7,23 +7,23 @@ on:
       - v*
 
 jobs:
-  test:
-    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@develop
-    with:
-      UPGRADE_TEST: "false"
-    secrets:
-      CURRENT_RELEASE_VERSION: ${{ secrets.CURRENT_RELEASE_VERSION }}
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+#  test:
+#    uses: MericFeyz/platform-launcher/.github/workflows/makefile.yaml@develop
+#    with:
+#      UPGRADE_TEST: "false"
+#    secrets:
+#      CURRENT_RELEASE_VERSION: ${{ secrets.CURRENT_RELEASE_VERSION }}
+#      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+#      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   build:
-    needs: test
+#    needs: test
     runs-on: ubuntu-latest
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DOCKER_PREFIX: ${{ secrets.DOCKER_PREFIX }}
       PUSH_DRYRUN: true
-      SELF_HOSTED_RUNNER: false
+      SELF_HOSTED_RUNNER: ''
     steps:
       - uses: actions/checkout@v3
         with:
