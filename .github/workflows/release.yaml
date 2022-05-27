@@ -1,6 +1,5 @@
 
-
-name: Nigthly
+name: Tags CI&CD
 
 on:
   push:
