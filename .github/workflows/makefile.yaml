@@ -31,8 +31,8 @@ jobs:
     env:
       UPGRADE_TEST: ''
       CURRENT_RELEASE_VERSION: ''
-      SELF_HOSTED_RUNNER: true
-    runs-on: private
+      SELF_HOSTED_RUNNER: false
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
